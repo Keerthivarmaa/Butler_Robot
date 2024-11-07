@@ -38,5 +38,36 @@ Ensure the following packages and dependencies are installed before setting up t
 
         source install/setup.bash
 
+# Robot Simulation
+
+All the commands should run in the `robot_ws` directory and sourcing the workspace is mandatory
+
+- Launch gazebo
+
+        ros2 launch butler gazebo.launch.py world:=src/Butler_Robot/world/cafe.world
+
+- Launch rviz2
+
+        ros2 run rviz2 rviz2 -d ./src/Butler_Robot/config/map.rviz
+
+- Launch Map 
+
+        ros2 launch butler online_async_launch.py
+
+- Launch Navigation_stack
+
+        ros2 launch butler navigation_launch.py
+
+**Current features enables for the robot:**
+
+- To navigate the robot to the user defined location , in our case **`Home`,`Kitchen`,`Tables 1,2,3`**
+
+        ros2 run butler move
+
+- To accept the order from the kitchen and deliver to the choosen single table
+
+        ros2 run butler single_task
+
+
 
 
