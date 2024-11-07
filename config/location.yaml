@@ -1,0 +1,20 @@
+home:
+  x: 0.0
+  y: 0.0
+  theta: 0.0
+kitchen:
+  x: 2.0
+  y: 0.0
+  theta: 1.57
+table1:
+  x: 1.0
+  y: 2.0
+  theta: 0.0
+table2:
+  x: 3.0
+  y: 2.0
+  theta: 0.0
+table3:
+  x: 4.0
+  y: 3.0
+  theta: 1.57

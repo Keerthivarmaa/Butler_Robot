@@ -1,0 +1,40 @@
+/* Set background color for the main window */
+QWidget {
+    background-color: #2e3440;
+    color: #d8dee9;
+}
+
+/* Style buttons with padding, borders, and hover effects */
+QPushButton {
+    background-color: #4c566a;
+    border: 2px solid #81a1c1;
+    border-radius: 10px;
+    color: #d8dee9;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #5e81ac;
+    border: 2px solid #88c0d0;
+}
+
+QPushButton:pressed {
+    background-color: #81a1c1;
+    border: 2px solid #8fbcbb;
+}
+
+/* Style the QLabel for status */
+QLabel {
+    font-size: 16px;
+    padding: 10px;
+    border: 1px solid #88c0d0;
+    border-radius: 5px;
+    background-color: #434c5e;
+}
+
+/* Style the QPushButton icons */
+QPushButton:flat {
+    border: none;
+}
