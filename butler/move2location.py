@@ -10,7 +10,7 @@ class ButlerRobotNavigator(Node):
         super().__init__('butler_robot_navigator')
         self.action_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
         
-        # To store coordinates for each location
+  
         self.locations = {
             'home': {'x': 0.0, 'y': 0.0, 'yaw': 0.0},
             'kitchen': {'x': 10.55, 'y': 0.05, 'yaw': 0.0},

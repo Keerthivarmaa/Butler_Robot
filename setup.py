@@ -29,6 +29,7 @@ setup(
             'control = butler.control:main',
             'move = butler.move2location:main',
             'queue = butler.queue:main',
+            'multi_order = butler.multi_order:main',
         ],
     },
 )

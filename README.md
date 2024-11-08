@@ -58,15 +58,20 @@ All the commands should run in the `robot_ws` directory and sourcing the workspa
 
         ros2 launch butler navigation_launch.py
 
-**Current features enables for the robot:**
+**Current features enabled for the robot:**
 
-- To navigate the robot to the user defined location , in our case **`Home`,`Kitchen`,`Tables 1,2,3`**
+- To navigate the robot to the user defined location , in our case **`Home`,`Kitchen`,`Tables 1,2,3`** 
 
         ros2 run butler move
 
-- To accept the order from the kitchen and deliver to the choosen single table
+- To accept the order from the kitchen and deliver to each tables sequentially
 
-        ros2 run butler single_task
+        ros2 run butler queue
+
+- To deliver multiple orders:`The robot will accept multiple orders from the kitchen and deliver them to the designated tables. If any order is canceled, the robot will skip the corresponding table(s), return the canceled order to the kitchen, and then go back to its home position. If all orders are accepted, the robot will deliver to all tables and return to home`.
+
+        ros2 run butler multi_order
+
 
 
 

@@ -11,7 +11,6 @@ class ButlerRobot(Node):
         super().__init__('butler_robot')
         self.action_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
         
-        # Define coordinates for each location
         self.locations = {
             'home': {'x': 0.0, 'y': 0.0, 'yaw': 0.0},
             'kitchen': {'x': 10.35, 'y': 0.11, 'yaw': 90.0},
@@ -20,7 +19,6 @@ class ButlerRobot(Node):
             'table3': {'x': 2.19, 'y': 4.11, 'yaw': 0.0}
         }
         
-        # Order queue
         self.orders = []
         self.current_order = None
         self.task_status = "Idle"
@@ -37,55 +35,59 @@ class ButlerRobot(Node):
 
     def send_goal(self, location):
         goal_msg = NavigateToPose.Goal()
-        # Populate the goal with the coordinates
         pose = PoseStamped()
         pose.header.frame_id = "map"
         pose.pose.position.x = location['x']
         pose.pose.position.y = location['y']
         
-        # Convert yaw to quaternion
         yaw = location['yaw']
         pose.pose.orientation.z = math.sin(yaw / 2.0)
         pose.pose.orientation.w = math.cos(yaw / 2.0)
         
         goal_msg.pose = pose
         self.action_client.wait_for_server()
-        
-        # Send the goal and wait for result
+
         return self.action_client.send_goal_async(goal_msg)
 
+
     def execute_order(self):
-        if not self.orders:
-            self.get_logger().info("No orders to process.")
-            return
+        while self.orders:
+            self.current_order = self.orders.pop(0)
+            table = self.current_order['table']
+            self.get_logger().info(f"Starting delivery to Table {table}")
+            
+            # Move to Kitchen
+            self.task_status = "Moving to Kitchen"
+            self.send_goal(self.locations['kitchen']).result()
+            
+            # Confirm at Kitchen if required
+            if self.current_order['requires_confirmation']:
+                self.get_logger().info("Waiting for confirmation at the kitchen...")
+                if not self.wait_for_confirmation(timeout=10):
+                    self.get_logger().info("Timeout at kitchen. Returning home.")
+                    self.return_home()
+                    continue  # Skip to the next order
 
-        self.current_order = self.orders.pop(0)
-        table = self.current_order['table']
-        self.get_logger().info(f"Starting delivery to Table {table}")
-        
-        self.task_status = "Moving to Kitchen"
-        self.send_goal(self.locations['kitchen']).result()
-        
-        if self.current_order['requires_confirmation']:
-            self.get_logger().info("Waiting for confirmation at the kitchen...")
-            if not self.wait_for_confirmation(timeout=10):
-                self.get_logger().info("Timeout at kitchen. Returning home.")
-                self.return_home()
-                return
+            # Move to Table
+            self.task_status = "Moving to Table"
+            self.send_goal(self.locations[table]).result()
 
-        self.task_status = "Moving to Table"
-        self.send_goal(self.locations[table]).result()
+            # Confirm at Table if required
+            if self.current_order['requires_confirmation']:
+                self.get_logger().info(f"Waiting for confirmation at Table {table}...")
+                if not self.wait_for_confirmation(timeout=10):
+                    self.get_logger().info(f"Timeout at Table {table}. Returning to kitchen.")
+                    self.return_to_kitchen()
+                    self.return_home()
+                    continue 
 
-        if self.current_order['requires_confirmation']:
-            self.get_logger().info(f"Waiting for confirmation at Table {table}...")
-            if not self.wait_for_confirmation(timeout=10):
-                self.get_logger().info(f"Timeout at Table {table}. Returning to kitchen.")
-                self.return_to_kitchen()
-                self.return_home()
-                return
+            # Complete the delivery and move back home
+            self.get_logger().info(f"Delivery to Table {table} complete. Returning home.")
+            self.return_home()
 
-        self.task_status = "Returning Home"
-        self.return_home()
+        # After all orders are complete
+        self.task_status = "Idle"
+        self.get_logger().info("All orders completed.")
 
     def wait_for_confirmation(self, timeout):
         start_time = time.time()
@@ -100,7 +102,7 @@ class ButlerRobot(Node):
 
     def return_home(self):
         self.task_status = "Returning Home"
-        self.get_logger().info("Returning to home position.")
+        #self.get_logger().info("Returning to home position.")
         self.send_goal(self.locations['home']).result()
         self.task_status = "Idle"
 
@@ -116,7 +118,7 @@ def main(args=None):
     # Add some sample orders
     robot.add_order('table1', requires_confirmation=True)
     robot.add_order('table2', requires_confirmation=True, cancelable=True)
-    robot.add_order('table3')
+    robot.add_order('table3',requires_confirmation=True, cancelable=True)
     
     # Execute orders
     while robot.orders:
