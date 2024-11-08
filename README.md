@@ -2,6 +2,10 @@
 
 This project is a ROS2-based navigation system for a Butler Robot in a simulated environment. The robot can take orders to deliver items to specific tables, moving between predefined locations such as the home position, kitchen, and tables. It uses `nav2_simple_commander` for handling navigation tasks.
 
+# Environment Setup
+
+- `Ubuntu version` - 22.04
+- `ROS2 version`   - Humble
 # Prerequisites
 
 Ensure the following packages and dependencies are installed before setting up the workspace.
@@ -17,6 +21,7 @@ Ensure the following packages and dependencies are installed before setting up t
 - **Slam-toolbox**
 
         sudo apt install ros-humble-slam-toolbox
+
 
 # Workspace setup
 
@@ -64,14 +69,25 @@ All the commands should run in the `robot_ws` directory and sourcing the workspa
 
         ros2 run butler move
 
+- 
+        This node will provide a prompt to select a location to navigate.
+
 - To accept the order from the kitchen and deliver to each tables sequentially
 
         ros2 run butler queue
+
+- 
+        This node will provide a prompt to select the tables.
 
 - To deliver multiple orders:`The robot will accept multiple orders from the kitchen and deliver them to the designated tables. If any order is canceled, the robot will skip the corresponding table(s), return the canceled order to the kitchen, and then go back to its home position. If all orders are accepted, the robot will deliver to all tables and return to home`.
 
         ros2 run butler multi_order
 
+- 
+        This node will provide a prompt to select the tables and asks for confirmation at each stages at kitchen and tables
+
+# Future Improvements
+- Improved user interface for order management.
 
 
 
