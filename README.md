@@ -63,7 +63,7 @@ All the commands should run in the `robot_ws` directory and sourcing the workspa
 
         ros2 launch butler navigation_launch.py
 
-**Current features enabled for the robot:**
+# Current features enabled for the robot:
 
 - To navigate the robot to the user defined location , in our case **`Home`,`Kitchen`,`Tables 1,2,3`** 
 
